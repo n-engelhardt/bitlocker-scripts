@@ -1,5 +1,26 @@
-﻿$ErrorActionPreference = "Stop"
+﻿#Nathan Engelhardt
 
+#This script checks the bitlocker status of the system drive
+
+#It is intended for use in environments where the system drive is
+#to be protected by a TPM protector and a recovery password protector
+
+#Exit code guide:
+#0 System drive is encrypted, intended protectors are in place
+#3 Recovery protectors are in place, encryption is in progress
+#4 Encryption has been initiated, but requires a reboot to complete hardware tests before encryption begins
+#6 System drive is not encrypted, and has not intention of becoming encrypted at this time
+#7 TPM Protector is missing
+#8 Recovery Password Protector is missing
+#11 Unable to determine bitlocker status
+
+#In the event of errors (exit code >10), error information is output
+
+
+#Ensure stop action occurs on errors so we can catch the errors
+$ErrorActionPreference = "Stop"
+
+#Get the bitlocker status. If it fails, error out
 Try {$Blstatus = (Get-BitLockerVolume -MountPoint $env:SystemDrive)}
 Catch {
     Write-Output "Unable to get Bitlocker Status"
